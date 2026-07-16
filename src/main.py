@@ -3,16 +3,13 @@ from engine import StatsTracker, WordGenerator
 
 
 def run_loop():
-    # Initialize generators and metrics
     word_gen = WordGenerator()
     stats = StatsTracker()
 
-    # Generate target text (10 words from en_1000)
     target = word_gen.generate_text_block("en_1000", 10)
     typed = ""
 
     with TUIContext() as term:
-        # Clear screen once at start to remove terminal junk
         print(term.clear, end="", flush=True)
         renderer = TUIRenderer(term)
 
