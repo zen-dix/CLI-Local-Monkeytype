@@ -1,32 +1,50 @@
-import time
-from ui import TUIContext
+from ui import TUIContext, TUIRenderer
+from engine import StatsTracker, WordGenerator
 
 
 def run_loop():
+    # Initialize generators and metrics
+    word_gen = WordGenerator()
+    stats = StatsTracker()
+
+    # Generate target text (10 words from en_1000)
+    target = word_gen.generate_text_block("en_1000", 10)
+    typed = ""
+
     with TUIContext() as term:
+        # Clear screen once at start to remove terminal junk
+        print(term.clear, end="", flush=True)
+        renderer = TUIRenderer(term)
+
         with term.cbreak():
-            wasted_time = 0.0
-            output_line = 4
             while True:
+                renderer.draw_stats(wpm=stats.wpm, accuracy=stats.accuracy)
+                renderer.draw_typing_screen(target, typed)
+
+                if len(typed) == len(target):
+                    stats.stop()
+                    renderer.draw_stats(wpm=stats.wpm, accuracy=stats.accuracy)
+                    term.inkey()
+                    break
+
                 key = term.inkey(timeout=0.05)
 
-                if key:
-                    print(
-                        term.move_xy(0, output_line)
-                        + term.clear_eol
-                        + f"Pressed: {key}",
-                        end="",
-                        flush=True,
-                    )
-                    if key.name == "KEY_ESCAPE":
-                        break
-                else:
-                    wasted_time += 0.05
-                    print(
-                        term.move_xy(0, 2) + f"Waiting... Time: {wasted_time:.2f}s",
-                        end="",
-                        flush=True,
-                    )
+                if not key:
+                    continue
+
+                if key.name == "KEY_ESCAPE":
+                    break
+
+                elif key.name in ("KEY_BACKSPACE", "KEY_DELETE") or key == "\x7f":
+                    if len(typed) > 0:
+                        typed = typed[:-1]
+
+                elif not key.is_sequence and key != "":
+                    target_char = target[len(typed)]
+
+                    stats.register_keystroke(target_char, key)
+
+                    typed += key
 
 
 if __name__ == "__main__":
