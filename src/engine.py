@@ -57,7 +57,7 @@ class WordGenerator:
 
 class StatsTracker:
     def __init__(self) -> None:
-        self.start_time = time.time()
+        self.start_time = None
         self.end_time = None
         self.correct_chars = 0
         self.total_typed = 0
@@ -83,6 +83,8 @@ class StatsTracker:
 
     @property
     def wpm(self) -> float:
+        if self.start_time is None:
+            return 0.0
         end = self.end_time if self.end_time is not None else time.time()
         elapsed_seconds = end - self.start_time
         if elapsed_seconds < 0.1:

@@ -8,7 +8,6 @@ def run_loop():
 
     target = word_gen.generate_text_block("en_1000", 10)
     typed = ""
-    all_time = 0
     with TUIContext() as term:
         print(term.clear, end="", flush=True)
         renderer = TUIRenderer(term)
