@@ -8,7 +8,7 @@ def run_loop():
 
     target = word_gen.generate_text_block("en_1000", 10)
     typed = ""
-
+    all_time = 0
     with TUIContext() as term:
         print(term.clear, end="", flush=True)
         renderer = TUIRenderer(term)
@@ -20,12 +20,18 @@ def run_loop():
 
                 if len(typed) == len(target):
                     stats.stop()
-                    renderer.draw_stats(wpm=stats.wpm, accuracy=stats.accuracy)
-                    term.inkey()
+
+                    print(term.clear, end="", flush=True)
+                    renderer.draw_final_stats(
+                        wpm=stats.wpm, accuracy=stats.accuracy, time=round(all_time, 2)
+                    )
+                    while True:
+                        key = term.inkey()
+                        if key == "KEY_ESCAPE":
+                            break
                     break
-
                 key = term.inkey(timeout=0.05)
-
+                all_time += 0.05
                 if not key:
                     continue
 
@@ -37,8 +43,10 @@ def run_loop():
                         typed = typed[:-1]
 
                 elif not key.is_sequence and key != "":
-                    target_char = target[len(typed)]
-
+                    try:
+                        target_char = target[len(typed)]
+                    except IndexError:
+                        pass
                     stats.register_keystroke(target_char, key)
 
                     typed += key

@@ -68,7 +68,7 @@ class StatsTracker:
             self.correct_chars += 1
 
     @property
-    def accuracy(self):
+    def accuracy(self) -> float:
         if self.total_typed == 0:
             return 100.0
         else:
@@ -78,7 +78,7 @@ class StatsTracker:
         self.end_time = time.time()
 
     @property
-    def wpm(self):
+    def wpm(self) -> float:
         end = self.end_time if self.end_time is not None else time.time()
         elapsed_seconds = end - self.start_time
         if elapsed_seconds < 0.1:

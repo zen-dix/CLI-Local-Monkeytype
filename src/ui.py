@@ -24,8 +24,19 @@ class TUIRenderer:
         return ((self.term.width - text_len) // 2, self.term.height // 2)
 
     def draw_stats(self, wpm, accuracy) -> None:
+        x, y = self._get_center_coords(len(str(wpm) + str(accuracy)) + 14)
+
         print(
-            self.term.move_xy(0, 0) + f"WPM: {wpm} Accuracy: {accuracy}",
+            self.term.move_xy(x, 0) + f"WPM: {wpm} Accuracy: {accuracy}",
+            end="",
+            flush=True,
+        )
+
+    def draw_final_stats(self, wpm, accuracy, time) -> None:
+        x, y = self._get_center_coords(len(str(wpm) + str(accuracy) + str(time)) + 21)
+
+        print(
+            self.term.move_xy(x, y) + f"WPM: {wpm} Accuracy: {accuracy} Time: {time}",
             end="",
             flush=True,
         )
