@@ -56,13 +56,15 @@ class WordGenerator:
 
 
 class StatsTracker:
-    def __init__(self):
+    def __init__(self) -> None:
         self.start_time = time.time()
         self.end_time = None
         self.correct_chars = 0
         self.total_typed = 0
 
     def register_keystroke(self, target_char: str, input_char: str) -> None:
+        if self.start_time is None:
+            self.start_time = time.time()
         self.total_typed += 1
         if target_char == input_char:
             self.correct_chars += 1
@@ -75,6 +77,8 @@ class StatsTracker:
             return round(self.correct_chars / self.total_typed * 100, 2)
 
     def stop(self):
+        if self.start_time is None:
+            self.start_time = time.time()
         self.end_time = time.time()
 
     @property
@@ -86,6 +90,13 @@ class StatsTracker:
         minutes = elapsed_seconds / 60
         wpm = (self.correct_chars / 5) / minutes
         return round(wpm, 2)
+
+    @property
+    def elapsed_time(self) -> float:
+        if self.start_time is None:
+            return 0.0
+        end = self.end_time if self.end_time is not None else time.time()
+        return end - self.start_time
 
 
 # tests

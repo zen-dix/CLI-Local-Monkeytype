@@ -23,7 +23,9 @@ def run_loop():
 
                     print(term.clear, end="", flush=True)
                     renderer.draw_final_stats(
-                        wpm=stats.wpm, accuracy=stats.accuracy, time=round(all_time, 2)
+                        wpm=stats.wpm,
+                        accuracy=stats.accuracy,
+                        time=round(stats.elapsed_time, 2),
                     )
                     while True:
                         key = term.inkey()
@@ -31,7 +33,6 @@ def run_loop():
                             break
                     break
                 key = term.inkey(timeout=0.05)
-                all_time += 0.05
                 if not key:
                     continue
 
