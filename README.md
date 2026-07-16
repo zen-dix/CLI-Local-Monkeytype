@@ -35,7 +35,7 @@ The project adheres to strict **Separation of Concerns (SoC)**, separating the b
 ```bash
    git clone [https://github.com/zen-dix/CLI-Local-Monkeytype.git](https://github.com/zen-dix/CLI-Local-Monkeytype.git)
    cd local-monkeytype/src
-   pip install blessed
+   pip install -r requirements.txt
    python main.py
 ```
 ## 🗺️ Roadmap & Upcoming Plans
