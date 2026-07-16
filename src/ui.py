@@ -16,32 +16,80 @@ class TUIContext:
             return True
 
 
+class TUIRenderer:
+    def __init__(self, term):
+        self.term = term
+
+    def _get_center_coords(self, text_len: int) -> tuple:
+        return ((self.term.width - text_len) // 2, self.term.height // 2)
+
+    def draw_stats(self, wpm, accuracy) -> None:
+        print(
+            self.term.move_xy(0, 0) + f"WPM: {wpm} Accuracy: {accuracy}",
+            end="",
+            flush=True,
+        )
+
+    def draw_typing_screen(self, target_text: str, user_input: str) -> None:
+        output_str = ""
+        x, y = self._get_center_coords(len(target_text))
+        for i in range(len(target_text)):
+            if i < len(user_input):
+                if target_text[i] == user_input[i]:
+                    output_str += self.term.green(target_text[i])
+                else:
+                    if target_text[i] == " ":
+                        symb = "_"
+                    else:
+                        symb = target_text[i]
+                    output_str += self.term.red(symb)
+            elif i == len(user_input):
+                output_str += self.term.reverse(target_text[i])
+
+            else:
+                output_str += self.term.dim(target_text[i])
+
+        wipe_str = " " * len(target_text)
+        print(
+            self.term.move_xy(x, y) + wipe_str + self.term.move_xy(x, y) + output_str,
+            end="",
+            flush=True,
+        )
+
+
 if __name__ == "__main__":
-    # Импортируем time только для теста
     import time
 
-    print("Это обычный экран терминала.")
+    print("Starting Interactive UI test...")
     time.sleep(1)
 
     try:
         with TUIContext() as term:
-            # Проверяем центрирование текста (из теории)
-            test_text = "TUI работает! Ждем 3 секунды..."
-            x = (term.width - len(test_text)) // 2
-            y = term.height // 2
+            with term.cbreak():
+                renderer = TUIRenderer(term)
 
-            print(term.move_xy(x, y) + test_text, flush=True)
-            time.sleep(3)
+                print(term.clear, end="")
 
-            # Проверяем, что будет при Ctrl+C внутри контекста
-            print(
-                term.move_xy(x, y + 2) + "А теперь нажми Ctrl+C для теста проверки!",
-                flush=True,
-            )
-            while True:
-                time.sleep(0.1)
+                target = "hello world"
+                typed = ""
+
+                while True:
+                    renderer.draw_stats(wpm=72.5, accuracy=96.4)
+                    renderer.draw_typing_screen(target, typed)
+
+                    key = term.inkey()
+
+                    if key.name == "KEY_ESCAPE":
+                        break
+
+                    elif key.name in ("KEY_BACKSPACE", "KEY_DELETE") or key == "\x7f":
+                        if len(typed) > 0:
+                            typed = typed[:-1]
+
+                    elif not key.is_sequence and key != "" and len(typed) < len(target):
+                        typed += key
 
     except Exception as e:
-        print(f"Какая-то другая ошибка: {e}")
+        print(f"Test crashed with error: {e}")
 
-    print("Мы успешно вернулись в обычный терминал! История очищена, курсор на месте.")
+    print("Returned to normal shell. Terminal state restored successfully!")
