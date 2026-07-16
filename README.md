@@ -33,10 +33,27 @@ The project adheres to strict **Separation of Concerns (SoC)**, separating the b
 ### Installation
 
 ```bash
-   git clone [https://github.com/zen-dix/CLI-Local-Monkeytype.git](https://github.com/zen-dix/CLI-Local-Monkeytype.git)
-   cd local-monkeytype/src
-   pip install -r requirements.txt
-   python main.py
+# Clone the repository
+git clone https://github.com/zen-dix/CLI-Local-Monkeytype
+
+# Navigate into the project directory
+cd CLI-Local-Monkeytype
+
+# Create a virtual environment
+python -m venv venv
+
+# Activate the virtual environment
+# For Linux/macOS:
+source venv/bin/activate
+# For Windows (PowerShell): \venv\Scripts\Activate.ps1
+# For Windows (CMD): \venv\Scripts\activate.bat
+
+# Install the required package inside the environment
+pip install blessed
+
+# Navigate to the source folder and run the script
+cd src
+python main.py
 ```
 ## 🗺️ Roadmap & Upcoming Plans
 
